@@ -1,0 +1,35 @@
+version: "2"
+
+services:
+  web:
+   image: php:5.6-apache # 左側で仮想環境のphpのバージョンを指定
+   container_name: web
+   build: ./web
+   depends_on:
+     - db
+   ports:
+     - "8000:80"
+   # links:
+   #  - db
+   # environment:
+    # bargeでは、/usr/local/binも追加しておかないと起動できない。
+    # PATH: ${PATH}:/usr/local/bin:/root/.composer/vendor/bin
+   volumes:
+     - ./laraset2/public:/var/www/html/
+   tty: true
+    # - ./web/config/apache2/sites-available:/etc/apache2/sites-available
+    # - ./apache.conf:/etc/apache2/apache2.conf
+
+  db:
+   image: mysql:5.7
+   ports:
+     - "3306:3306"
+   environment:
+    MYSQL_ROOT_PASSWORD: root
+   volumes_from:
+     - data
+
+  data:
+    image: busybox:1
+    volumes:
+      - /var/lib/mysql:/var/lib/mysql
